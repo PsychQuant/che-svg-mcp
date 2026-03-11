@@ -7,10 +7,10 @@
     "name": "Che Cheng"
   },
   "license": "MIT",
-  "homepage": "https://github.com/kiki830621/che-svg-mcp",
+  "homepage": "https://github.com/PsychQuant/che-svg-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kiki830621/che-svg-mcp"
+    "url": "https://github.com/PsychQuant/che-svg-mcp"
   },
   "server": {
     "type": "binary",
