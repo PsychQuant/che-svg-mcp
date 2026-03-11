@@ -48,23 +48,25 @@ public class CheSvgMCPServer {
     // MARK: - Handler Registration
 
     private func registerHandlers() async {
-        await server.withMethodHandler(ListTools.self) { _ in
-            ListTools.Result(tools: self.tools)
+        await server.withMethodHandler(ListTools.self) { [tools] _ in
+            ListTools.Result(tools: tools)
         }
 
-        await server.withMethodHandler(CallTool.self) { params in
-            try await self.handleToolCall(params)
+        await server.withMethodHandler(CallTool.self) { [weak self] params in
+            guard let self else {
+                return CallTool.Result(content: [.text("Server unavailable")], isError: true)
+            }
+            return try await self.handleToolCall(params)
         }
     }
 
-    private func handleToolCall(_ params: CallTool.Request) async throws -> CallTool.Result {
+    private func handleToolCall(_ params: CallTool.Parameters) async throws -> CallTool.Result {
+        let args = params.arguments ?? [:]
+
         switch params.name {
         case "hello_world":
-            let name = (params.arguments?["name"] as? String) ?? "World"
-            return CallTool.Result(
-                content: [.text("Hello, \(name)!")],
-                isError: false
-            )
+            let name = args["name"]?.stringValue ?? "World"
+            return CallTool.Result(content: [.text("Hello, \(name)!")])
         default:
             return CallTool.Result(
                 content: [.text("Unknown tool: \(params.name)")],
